@@ -23,7 +23,9 @@ public class StreamingJob {
 		inputProperties.setProperty(ConsumerConfigConstants.AWS_REGION, region);
 		inputProperties.setProperty(ConsumerConfigConstants.STREAM_INITIAL_POSITION, "LATEST");
 
-		return env.addSource(new FlinkKinesisConsumer<>(inputStreamName, new SimpleStringSchema(), inputProperties));
+		return env.addSource(new FlinkKinesisConsumer<>(inputStreamName, new SimpleStringSchema(), inputProperties))
+				.name("kpltest input")
+				.uid("kpltest input");
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -31,8 +33,12 @@ public class StreamingJob {
 		final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
 		DataStream<String> input = createSourceFromStaticConfig(env);
+
 		input
+
 				.map(new QuoteMapper())
+					.name("quote mapper")
+					.uid("quote mapper")
 				.keyBy(quote -> quote.symbol)
 				.window(TumblingProcessingTimeWindows.of(Time.seconds(1)))
 				.reduce(new ReduceFunction<Quote>() {
@@ -41,7 +47,8 @@ public class StreamingJob {
 						return t1; //Conflate all quotes in a window to the last quote
 					}
 				})
-				.print();
+				.name("quote reducer").uid("quote reducer")
+				.print().name("quote printer").uid("quote printer");
 
 		// execute program
 		env.execute("Flink Streaming Java API Skeleton");
