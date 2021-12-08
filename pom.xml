@@ -35,6 +35,9 @@ under the License.
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<log4j.version>2.12.1</log4j.version>
+		<cdk.version>1.134.0</cdk.version>
+		<amazon-kinesis-connector-flink.version>2.0.3</amazon-kinesis-connector-flink.version>
+
 	</properties>
 
 	<repositories>
@@ -118,9 +121,35 @@ under the License.
 		</dependency>
 
 		<dependency>
+			<groupId>software.amazon.kinesis</groupId>
+			<artifactId>amazon-kinesis-connector-flink</artifactId>
+			<version>${amazon-kinesis-connector-flink.version}</version>
+		</dependency>
+<!--
+		<dependency>
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-connector-kinesis_${scala.binary.version}</artifactId>
 			<version>${flink.version}</version>
+		</dependency>
+-->
+		<dependency>
+			<groupId>software.amazon.awscdk</groupId>
+			<artifactId>core</artifactId>
+			<version>${cdk.version}</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>software.amazon.awscdk</groupId>
+			<artifactId>kinesis</artifactId>
+			<version>${cdk.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>software.amazon.awscdk</groupId>
+			<artifactId>assertions</artifactId>
+			<version>${cdk.version}</version>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>
@@ -132,10 +161,19 @@ under the License.
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>3.8.1</version>
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<mainClass>org.ds.flink.kpl.setup.SetupApp</mainClass>
 				</configuration>
 			</plugin>
 

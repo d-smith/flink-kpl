@@ -8,20 +8,26 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
-import org.apache.flink.streaming.connectors.kinesis.FlinkKinesisConsumer;
 import org.apache.flink.streaming.connectors.kinesis.config.ConsumerConfigConstants;
+import software.amazon.kinesis.connectors.flink.FlinkKinesisConsumer;
+
+import static software.amazon.kinesis.connectors.flink.config.ConsumerConfigConstants.EFO_CONSUMER_NAME;
+import static software.amazon.kinesis.connectors.flink.config.ConsumerConfigConstants.RECORD_PUBLISHER_TYPE;
+
 
 import java.util.Properties;
 
 
 public class StreamingJob {
-	private static final String region = "us-east-1";
+	private static final String region = System.getenv("AWS_REGION");
 	private static final String inputStreamName = "kpltest";
 
 	private static DataStream<String> createSourceFromStaticConfig(StreamExecutionEnvironment env) {
 		Properties inputProperties = new Properties();
 		inputProperties.setProperty(ConsumerConfigConstants.AWS_REGION, region);
 		inputProperties.setProperty(ConsumerConfigConstants.STREAM_INITIAL_POSITION, "LATEST");
+		inputProperties.setProperty(RECORD_PUBLISHER_TYPE, "EFO" );
+		inputProperties.setProperty(EFO_CONSUMER_NAME, "kpltestcon");
 
 		return env.addSource(new FlinkKinesisConsumer<>(inputStreamName, new SimpleStringSchema(), inputProperties))
 				.name("kpltest input")
