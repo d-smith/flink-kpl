@@ -4,10 +4,10 @@ This project illustrates integrating a KPL Kinesis producer with a Flink applica
 
 ## Set up
 
-Create a stream
+Create the stream and EFO consumer
 
 ```
-aws kinesis create-stream --stream-name kpltest --shard-count 1
+cdk deploy
 ```
 
 ## Observations
@@ -50,7 +50,7 @@ b'FAMI,588.7074183119951'
 ### Flink App
 
 The Flink app was able to operate successfully on the stream regardless of the data thrown at it. Even with the
-producer running with a large buffer delay and packing multple records in the app continued to
+producer running with a large buffer delay and packing multiple records in the app continued to
 process the stream data with no problems.
 
 ```
